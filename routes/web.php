@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/*Route::get('/', function () {
+    return view('layouts/main');
+});*/
+
+
+Route::get('/', 'HomeController@index');
+
+Route::get('/periodos', 'PeriodoController@index');
+Route::get('/periodos/get-all', 'PeriodoController@getAll');
+Route::post('/periodos/create', 'PeriodoController@create');
+Route::post('/periodos/update', 'PeriodoController@update');
+
+Route::get('/ciclos', 'CicloController@index');
+Route::get('/ciclos/get-all', 'CicloController@getAll');
+Route::post('/ciclos/create', 'CicloController@create');
+Route::post('/ciclos/update', 'CicloController@update');
