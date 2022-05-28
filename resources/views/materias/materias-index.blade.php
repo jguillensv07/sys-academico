@@ -31,12 +31,13 @@
                     </button>
                 </div>
 
-                <table class="table table-hover dt-responsive nowrap" id="periodos-table" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <table class="table table-hover dt-responsive nowrap" id="materias-table" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead class="thead-dark">
                         <tr>
                             <th>Id</th>
-                            <th>Ciclo</th>
-                            <th>Orden</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>U.V.</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -60,7 +61,7 @@
                 <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                <form id="ciclos-form" method="post">
+                <form id="materias-form" method="post">
 
                     <div class="form-group">
                         <label for="nombre">Nombre</label>
@@ -69,8 +70,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="orden">Orden</label>
-                        <input type="number" name="orden" id="orden" step="1" class="form-control" required>                        
+                        <label for="descripcion">Descripción</label>
+                        <textarea type="text" name="descripcion" id="descripcion" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="uv">U.V.</label>
+                        <input type="number" name="uv" id="uv" step="1" class="form-control" required>                        
                     </div>
 
                 </form>
@@ -102,7 +108,7 @@
 
     $(document).ready(function() {
 
-        var dataTable = $('#periodos-table').DataTable({
+        var dataTable = $('#materias-table').DataTable({
             // Design Assets
             stateSave: true,
             autoWidth: true,
@@ -117,7 +123,7 @@
             },
             // Ajax Filter
             ajax: {
-                url: "/ciclos/get-all",
+                url: "/materias/get-all",
                 type: "GET",
                 contentType: "application/json",
                 dataType: "json"
@@ -132,7 +138,11 @@
                     orderable: false
                 },
                 {
-                    data: 'orden',
+                    data: 'descripcion',
+                    orderable: false
+                },
+                {
+                    data: 'uv',
                     orderable: false
                 },
                 {
@@ -157,7 +167,7 @@
         });
 
 
-        let form = $('#ciclos-form');
+        let form = $('#materias-form');
         let actionType = '';
 
 
@@ -172,7 +182,8 @@
 
             $('#id').val("");
             $('#nombre').val("");
-            $('#orden').val("");
+            $('#descripcion').val("");
+            $('#uv').val("");
 
             if (actionType == "edit") {
 
@@ -180,7 +191,8 @@
 
                 $('#id').val(dataRecord.id);
                 $('#nombre').val(dataRecord.nombre);
-                $('#orden').val(dataRecord.orden);
+                $('#descripcion').val(dataRecord.descripcion);
+                $('#uv').val(dataRecord.uv);
             }
 
 
@@ -195,12 +207,12 @@
            
             if (!form.parsley().validate()) return;
 
-            var dataForm = $('#ciclos-form').serialize();
-            var urlTarget = '/ciclos/create';
+            var dataForm = $('#materias-form').serialize();
+            var urlTarget = '/materias/create';
             
             if(actionType == 'edit')
             {
-                urlTarget = '/ciclos/update';
+                urlTarget = '/materias/update';
             }
 
             $.ajax({

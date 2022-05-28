@@ -205,7 +205,7 @@
                             <ul class="nav-second-level" aria-expanded="false">
                                 <li><a href="/periodos">Períodos</a></li>
                                 <li><a href="/ciclos">Ciclos</a></li>                                
-                                <li><a href="pages-invoice.html">Materias</a></li>                              
+                                <li><a href="/materias">Materias</a></li>                              
                             </ul>
                         </li>
 

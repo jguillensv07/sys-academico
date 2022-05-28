@@ -29,3 +29,9 @@ Route::get('/ciclos', 'CicloController@index');
 Route::get('/ciclos/get-all', 'CicloController@getAll');
 Route::post('/ciclos/create', 'CicloController@create');
 Route::post('/ciclos/update', 'CicloController@update');
+
+Route::get('/materias', 'MateriaController@index');
+Route::get('/materias/get-all', 'MateriaController@getAll');
+Route::post('/materias/create', 'MateriaController@create');
+Route::post('/materias/update', 'MateriaController@update');
+
