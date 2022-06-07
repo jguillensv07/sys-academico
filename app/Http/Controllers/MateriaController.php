@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ciclo;
 use App\Materia;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,8 @@ class MateriaController extends Controller
 {
     public function index(Request $request)
     {
-        return view ('materias.materias-index');
+        $ciclos = Ciclo::all();
+        return view ('materias.materias-index', compact('ciclos'));
     }
 
     public function getAll(Request $request)
@@ -30,7 +32,8 @@ class MateriaController extends Controller
 
         $totalData = Materia::count();
 
-        $materias = Materia::select('id', 'nombre', 'descripcion', 'uv')
+        $materias = Materia::select('id', 'nombre', 'descripcion', 'uv', 'ciclo_id')
+            ->with('ciclo')
             ->where('nombre', 'LIKE', $searchValue)
             ->offset($offset)
             ->limit($limit)
@@ -63,6 +66,7 @@ class MateriaController extends Controller
 
         $this->validate($request, [
             "nombre" => "required",            
+            "ciclo_id" => "required", 
         ]);
 
         $materia = new materia();
@@ -70,6 +74,7 @@ class MateriaController extends Controller
         $materia->nombre = $request->nombre;
         $materia->descripcion = $request->descripcion;
         $materia->uv = $request->uv;
+        $materia->ciclo_id = $request->ciclo_id;
         $materia->save();
 
         return response()->json([
@@ -85,6 +90,7 @@ class MateriaController extends Controller
 
         $this->validate($request, [
             "nombre" => "required",            
+            "ciclo_id" => "required", 
         ]);
 
         $materia = materia::find($request->id);        
@@ -92,6 +98,7 @@ class MateriaController extends Controller
         $materia->nombre = $request->nombre;
         $materia->descripcion = $request->descripcion;
         $materia->uv = $request->uv;
+        $materia->ciclo_id = $request->ciclo_id;
         $materia->save();
 
         return response()->json([

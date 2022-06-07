@@ -146,7 +146,12 @@
                             return `
                                 <button class="btn btn-sm btn-primary waves-effect waves-light text-white edit-category" data-row='${jsonData}' data-title='Editar' data-action='edit' data-toggle='modal' data-target='#FormEditModal'>
                                     <i class="far fa-edit"></i>
-                                </button>`;
+                                    <!--<span class='pl-1'>Editar</span>-->
+                                </button>
+                                <!--<a href="/ciclos/detalle" class="btn btn-sm btn-success waves-effect waves-light text-white" data-row='${jsonData}'>
+                                    <i class="far fa-file"></i>
+                                    <span class='pl-1'>Materias</span>
+                                </a>-->`;
                         } else {
                             return data;
                         }

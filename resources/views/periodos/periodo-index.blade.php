@@ -138,7 +138,12 @@
                             return `
                                 <button class="btn btn-sm btn-primary waves-effect waves-light text-white edit-category" data-row='${jsonData}' data-title='Editar' data-action='edit' data-toggle='modal' data-target='#FormEditModal'>
                                     <i class="far fa-edit"></i>
-                                </button>`;
+                                    <span class='pl-1'>Editar</span>
+                                </button>
+                                <a href="/periodos/${data.id}/detalle" class="btn btn-sm btn-success waves-effect waves-light text-white" data-row='${jsonData}'>
+                                    <i class="far fa-file"></i>
+                                    <span class='pl-1'>Detalle</span>
+                                </a>`;
                         } else {
                             return data;
                         }

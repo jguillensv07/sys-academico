@@ -24,6 +24,10 @@ Route::get('/periodos', 'PeriodoController@index');
 Route::get('/periodos/get-all', 'PeriodoController@getAll');
 Route::post('/periodos/create', 'PeriodoController@create');
 Route::post('/periodos/update', 'PeriodoController@update');
+Route::get('/periodos/{periodo}/detalle', 'PeriodoController@detail');
+Route::get('/periodos/{periodo}/detalle/get-all', 'PeriodoController@ciclosGetAll');
+Route::post('/periodos/{periodo_id}/detalle/agregar-ciclo', 'PeriodoController@agregarCiclo');
+
 
 Route::get('/ciclos', 'CicloController@index');
 Route::get('/ciclos/get-all', 'CicloController@getAll');

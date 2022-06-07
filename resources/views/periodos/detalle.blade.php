@@ -4,8 +4,9 @@
 @section('breadcrumb')
 <div class="page-title-right">
     <ol class="breadcrumb p-0 m-0">
-        <li class="breadcrumb-item"><a href="/#">Dashboard</a></li>
-        <li class="breadcrumb-item active">Materias</li>
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/periodos">Dashboard</a></li>
+        <li class="breadcrumb-item active">Período Detalle</li>
     </ol>
 </div>
 @endsection
@@ -21,8 +22,13 @@
             <div class="card-body">
 
                 <h4 class="card-title">
-                    MATERIAS
+                    PERIODO DETALLE
                 </h4>
+
+                <div>
+                    <strong>Período: </strong>
+                    {{ $periodo->anio }}
+                </div>
 
                 <div class="text-right mb-4">
                     <button class="btn btn-sm btn-primary waves-effect waves-light text-white" id="add-category" data-title='Nuevo' data-action='new' data-toggle='modal' data-target='#FormEditModal'>
@@ -31,19 +37,16 @@
                     </button>
                 </div>
 
-                <table class="table table-hover dt-responsive nowrap" id="materias-table" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <table class="table table-hover dt-responsive nowrap" id="periodos-table" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Id</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>U.V.</th>
                             <th>Ciclo</th>
+                            <th>Estado</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody>
-                    
+
                     </tbody>
                 </table>
 
@@ -52,6 +55,8 @@
         </div>
     </div>
 </div>
+
+
 
 <div class="modal fade" id="FormEditModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="_modalWindow" style="display:none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -62,31 +67,16 @@
                 <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
-                <form id="materias-form" method="post">
+                <form id="periodos-form" method="post">
 
                     <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" name="nombre" id="nombre" class="form-control" required>
-                        <input type="hidden" name="id" id="id">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descripcion">Descripción</label>
-                        <textarea type="text" name="descripcion" id="descripcion" class="form-control" rows="4" required></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="uv">U.V.</label>
-                        <input type="number" name="uv" id="uv" step="1" class="form-control" required>                        
-                    </div>
-
-                    <div class="form-group">
-                        <label for="ciclo_id">Ciclo Asociado</label>
-                        <select name="ciclo_id" id="ciclo_id" step="1" class="form-control" required>
+                        <label for="ciclo_id">Ciclo:</label>
+                        <select name="ciclo_id" id="ciclo_id" class="form-control" required>
                             @foreach($ciclos as $ciclo)
                             <option value="{{ $ciclo->id }}">{{ $ciclo->nombre }}</option>
                             @endforeach
-                        </select>                        
+                        </select>
+                        <input type="hidden" id="periodo_id" name="periodo_id" value="{{ $periodo->id }}" />
                     </div>
 
                 </form>
@@ -102,9 +92,7 @@
 </div>
 
 
-
 @endsection
-
 
 
 @section('custom-scripts')
@@ -118,7 +106,9 @@
 
     $(document).ready(function() {
 
-        var dataTable = $('#materias-table').DataTable({
+        var periodo_id = $('#periodo_id').val();
+
+        var dataTable = $('#periodos-table').DataTable({
             // Design Assets
             stateSave: true,
             autoWidth: true,
@@ -133,30 +123,18 @@
             },
             // Ajax Filter
             ajax: {
-                url: "/materias/get-all",
+                url: `/periodos/${periodo_id}/detalle/get-all`,
                 type: "GET",
                 contentType: "application/json",
                 dataType: "json"
             },
             // Columns Setups
             columns: [{
-                    data: 'id',
-                    orderable: false
-                },
-                {
-                    data: 'nombre',
-                    orderable: false
-                },
-                {
-                    data: 'descripcion',
-                    orderable: false
-                },
-                {
-                    data: 'uv',
-                    orderable: false
-                },
-                {
                     data: 'ciclo.nombre',
+                    orderable: false
+                },
+                {
+                    data: 'estado',
                     orderable: false
                 },
                 {
@@ -167,10 +145,31 @@
                         if (type === 'display') {
                             var jsonData = JSON.stringify(data);
 
-                            return `
-                                <button class="btn btn-sm btn-primary waves-effect waves-light text-white edit-category" data-row='${jsonData}' data-title='Editar' data-action='edit' data-toggle='modal' data-target='#FormEditModal'>
+                            if(data.estado == "NO APERTURADO")
+                            {
+                                return `
+                                <button class="btn btn-sm btn-info waves-effect waves-light text-white edit-estado" data-row='${jsonData}' data-estado='APERTURAR'>
                                     <i class="far fa-edit"></i>
+                                    <span class='pl-1'>Aperturar</span>
                                 </button>`;
+                            }
+                            else  if(data.estado == "APERTURADO")
+                            {
+                                return `
+                                <button class="btn btn-sm btn-danger waves-effect waves-light text-white edit-estado" data-row='${jsonData}' data-estado='CERRAR'>
+                                    <i class="far fa-edit"></i>
+                                    <span class='pl-1'>CERRAR</span>
+                                </button>`;
+                            }
+                            else 
+                            {
+                                return `
+                                <button class="btn btn-sm btn-danger waves-effect waves-light text-white edit-estado" data-row='${jsonData}' data-estado='CERRAR'>
+                                    <i class="far fa-edit"></i>
+                                    <span class='pl-1'>CERRAR</span>
+                                </button>`;
+                            }
+                            
                         } else {
                             return data;
                         }
@@ -181,55 +180,17 @@
         });
 
 
-        let form = $('#materias-form');
-        let actionType = '';
 
-
-        $('#FormEditModal').on('show.bs.modal', function(event) {
-
-            var button = $(event.relatedTarget);
-
-            actionType = button.data('action');
-
-            form.trigger("reset");
-            form.parsley().reset();
-
-            $('#id').val("");
-            $('#nombre').val("");
-            $('#descripcion').val("");
-            $('#uv').val("");
-            $('#ciclo_id').val("");
-
-            if (actionType == "edit") {
-
-                var dataRecord = button.data('row');
-
-                $('#id').val(dataRecord.id);
-                $('#nombre').val(dataRecord.nombre);
-                $('#descripcion').val(dataRecord.descripcion);
-                $('#uv').val(dataRecord.uv);
-                $('#ciclo_id').val(dataRecord.ciclo_id);
-            }
-
-
-            var modal = $(this);
-            modal.find('.modal-title').text(button.data('title'));
-
-        });
+        let form = $('#periodos-form');
 
 
         $('#saveChanges').on('click', async function() {
 
-           
+
             if (!form.parsley().validate()) return;
 
-            var dataForm = $('#materias-form').serialize();
-            var urlTarget = '/materias/create';
-            
-            if(actionType == 'edit')
-            {
-                urlTarget = '/materias/update';
-            }
+            var dataForm = $('#periodos-form').serialize();
+            var urlTarget = `/periodos/${periodo_id}/detalle/agregar-ciclo`;
 
             $.ajax({
                     method: "POST",
