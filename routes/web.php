@@ -42,4 +42,6 @@ Route::post('/materias/update', 'MateriaController@update');
 
 Route::get('/estudiantes', 'EstudianteController@index');
 Route::get('/estudiantes/get-all', 'EstudianteController@getAll');
+Route::post('/estudiantes/create', 'EstudianteController@create');
+Route::post('/estudiantes/update', 'EstudianteController@update');
 

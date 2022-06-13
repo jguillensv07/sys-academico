@@ -132,20 +132,14 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
+                    <div class="form-row">                        
                         <div class="form-group col-md-3">
-                            <label for="departamento_id" class="col-form-label">Departamento</label>
-                            <select name="departamento_id" id="departamento_id" class="form-control form-control-sm">
-                                <option value="1">Soltero(a)</option>
-                                <option value="2">Casado(a)</option>
-                            </select>
+                            <label for="ciudad" class="col-form-label">Ciudad</label>
+                            <input type="text" name="ciudad" id="ciudad" class="form-control form-control-sm">
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="ciudad_id" class="col-form-label">Ciudad</label>
-                            <select name="ciudad_id" id="ciudad_id" class="form-control form-control-sm">
-                                <option value="1">Soltero(a)</option>
-                                <option value="2">Casado(a)</option>
-                            </select>
+                            <label for="departamento" class="col-form-label">Departamento</label>
+                            <input type="text" name="departamento" id="departamento" class="form-control form-control-sm">
                         </div>
                         <div class="form-group col-md-3">
                             <label for="telefono" class="col-form-label">Teléfono</label>
@@ -226,7 +220,7 @@
                         <div class="form-group col-md-6">
                             <label for="institucion_estudio" class="col-form-label">Institución de Estudio</label>
                             <input type="text" name="institucion_estudio" id="institucion_estudio" class="form-control form-control-sm">
-                        </div>              
+                        </div>
                         <div class="form-group col-md-2">
                             <div class="mt-5">
                                 <div class="custom-control custom-checkbox">
@@ -357,16 +351,65 @@
             form.parsley().reset();
 
             $('#id').val("");
-            $('#nombre').val("");
-            $('#orden').val("");
+            $('#primer_nombre').val("");
+            $('#segundo_nombre').val("");
+            $('#primer_apellido').val("");
+            $('#segundo_apellido').val("");
+            $('#apellido_casada').val("");
+            $('#dui').val("");
+            $('#fecha_nacimiento').val("");
+            $('#genero').val("");
+            $('#estado_civil_id').val("");
+            $('#direccion_domicilio').val("");
+            $('#ciudad').val("");
+            $('#departamento').val("");
+            $('#telefono').val("");
+            $('#celular').val("");
+            $('#correo').val("");
+            $('#nombre_conyugue').val("");
+            $('#direccion_conyugue').val("");
+            $('#ocupacion_conyugue').val("");
+            $('#edad_conyugue').val("");
+            $('#conyugue_es_creyente').prop('checked', false);
+            $('#telefono_conyugue').val("");
+            $('#cantidad_hijos').val("");
+            $('#cantidad_hijas').val("");
+            $('#ultimo_grado_estudio').val("");
+            $('#es_graduado').prop('checked', false);
+            $('#institucion_estudio').val("");
 
             if (actionType == "edit") {
 
                 var dataRecord = button.data('row');
-
+                
                 $('#id').val(dataRecord.id);
-                $('#nombre').val(dataRecord.nombre);
-                $('#orden').val(dataRecord.orden);
+                $('#primer_nombre').val(dataRecord.primer_nombre);
+                $('#segundo_nombre').val(dataRecord.segundo_nombre);
+                $('#primer_apellido').val(dataRecord.primer_apellido);
+                $('#segundo_apellido').val(dataRecord.segundo_apellido);
+                $('#apellido_casada').val(dataRecord.apellido_casada);
+                $('#dui').val(dataRecord.dui);
+                $('#fecha_nacimiento').val(moment(dataRecord.fecha_nacimiento).format('YYYY-MM-DD'));
+                $("input[name=genero][value=" + dataRecord.genero + "]").attr('checked', 'checked');
+                $('#estado_civil_id').val(dataRecord.estado_civil_id);
+                $('#direccion_domicilio').val(dataRecord.direccion_domicilio);
+                $('#ciudad').val(dataRecord.ciudad);
+                $('#departamento').val(dataRecord.departamento);
+                $('#telefono').val(dataRecord.telefono);
+                $('#celular').val(dataRecord.celular);
+                $('#correo').val(dataRecord.correo);
+                $('#nombre_conyugue').val(dataRecord.nombre_conyugue);
+                $('#direccion_conyugue').val(dataRecord.direccion_conyugue);
+                $('#ocupacion_conyugue').val(dataRecord.ocupacion_conyugue);
+                $('#edad_conyugue').val(dataRecord.edad_conyugue);
+                $('#conyugue_es_creyente').prop('checked', dataRecord.conyugue_es_creyente == '1');
+                $('#telefono_conyugue').val(dataRecord.telefono_conyugue);
+                $('#cantidad_hijos').val(dataRecord.cantidad_hijos);
+                $('#cantidad_hijas').val(dataRecord.cantidad_hijas);
+                $('#ultimo_grado_estudio').val(dataRecord.ultimo_grado_estudio);
+                $('#es_graduado').prop('checked', dataRecord.es_graduado == '1');
+                $('#institucion_estudio').val(dataRecord.institucion_estudio);
+
             }
 
 
@@ -382,10 +425,10 @@
             if (!form.parsley().validate()) return;
 
             var dataForm = $('#estudiantes-form').serialize();
-            var urlTarget = '/ciclos/create';
+            var urlTarget = '/estudiantes/create';
 
             if (actionType == 'edit') {
-                urlTarget = '/ciclos/update';
+                urlTarget = '/estudiantes/update';
             }
 
             $.ajax({

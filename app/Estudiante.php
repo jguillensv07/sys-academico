@@ -10,4 +10,5 @@ class Estudiante extends Model
     protected $primaryKey = 'id';
 
     protected $guarded = ['id'];
+    protected $dates = ['fecha_nacimiento'];
 }

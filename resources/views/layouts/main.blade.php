@@ -154,8 +154,9 @@
                             </a>
                             <ul class="nav-second-level" aria-expanded="false">
 
-                                <li><a href="/estudiantes/registrar">Nuevo Estudiante</a></li>
+                                <!--<li><a href="/estudiantes/registrar">Nuevo Estudiante</a></li>-->
                                 <li><a href="/estudiantes">Lista de Estudiantes</a></li>                               
+                                <li><a href="/solicitudes-de-admision">Solicitudes de Admisión</a></li>  
                             </ul>
                         </li>
 
@@ -297,6 +298,7 @@
     <script src="{{ URL::asset('libs/select2/select2.min.js') }}"></script>
     <script src="{{ URL::asset('libs/switchery/switchery.min.js') }}"></script>
     <script src="{{ URL::asset('libs/bootstrap-timepicker/bootstrap-timepicker.min.js') }}"></script>
+    <script src="{{ URL::asset('libs/moment/moment.min.js') }}"></script>
 
     <!-- App js -->
     <script src="{{ URL::asset('js/app.min.js') }}"></script>
