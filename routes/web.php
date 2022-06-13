@@ -39,3 +39,7 @@ Route::get('/materias/get-all', 'MateriaController@getAll');
 Route::post('/materias/create', 'MateriaController@create');
 Route::post('/materias/update', 'MateriaController@update');
 
+
+Route::get('/estudiantes', 'EstudianteController@index');
+Route::get('/estudiantes/get-all', 'EstudianteController@getAll');
+

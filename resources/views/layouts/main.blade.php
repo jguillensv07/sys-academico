@@ -154,8 +154,8 @@
                             </a>
                             <ul class="nav-second-level" aria-expanded="false">
 
-                                <li><a href="ui-typography.html">Nuevo Estudiante</a></li>
-                                <li><a href="ui-buttons.html">Lista de Estudiantes</a></li>                               
+                                <li><a href="/estudiantes/registrar">Nuevo Estudiante</a></li>
+                                <li><a href="/estudiantes">Lista de Estudiantes</a></li>                               
                             </ul>
                         </li>
 
