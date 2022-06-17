@@ -132,7 +132,7 @@
                         </div>
                     </div>
 
-                    <div class="form-row">                        
+                    <div class="form-row">
                         <div class="form-group col-md-3">
                             <label for="ciudad" class="col-form-label">Ciudad</label>
                             <input type="text" name="ciudad" id="ciudad" class="form-control form-control-sm">
@@ -318,15 +318,26 @@
                         if (type === 'display') {
                             var jsonData = JSON.stringify(data);
 
-                            return `
+                            let button = `
                                 <button class="btn btn-sm btn-primary waves-effect waves-light text-white edit-category" data-row='${jsonData}' data-title='Editar' data-action='edit' data-toggle='modal' data-target='#FormEditModal'>
                                     <i class="far fa-edit"></i>
-                                    <!--<span class='pl-1'>Editar</span>-->
+                                    <span class='pl-1'>Editar</span>
                                 </button>
                                 <!--<a href="/ciclos/detalle" class="btn btn-sm btn-success waves-effect waves-light text-white" data-row='${jsonData}'>
                                     <i class="far fa-file"></i>
                                     <span class='pl-1'>Materias</span>
                                 </a>-->`;
+
+                            if (data.admision_aprobada == 'NO') {
+                                button += `
+                                <button class="btn btn-sm btn-success waves-effect waves-light text-white generar-solicitud" data-row='${jsonData}'>
+                                    <i class="far fa-address-card"></i>
+                                    <span class='pl-1'>Generar Solicitud</span>
+                                </button>
+                                `;
+                            }
+
+                            return button;
                         } else {
                             return data;
                         }
@@ -381,7 +392,7 @@
             if (actionType == "edit") {
 
                 var dataRecord = button.data('row');
-                
+
                 $('#id').val(dataRecord.id);
                 $('#primer_nombre').val(dataRecord.primer_nombre);
                 $('#segundo_nombre').val(dataRecord.segundo_nombre);
@@ -460,6 +471,57 @@
                     }
 
                 });
+
+        });
+
+
+        $(document).on('click', '.generar-solicitud', function() {
+            let datos = $(this).data('row');
+
+            Swal.fire({
+                title: 'Advertencia',
+                text: "¿Esta seguro(a) de generar la solicitud de admisión para el estudiante seleccionado?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.value) {
+
+                    $.ajax({
+                            method: "POST",
+                            url: `/estudiantes/${datos.id}/generar-solicitud-admision`,
+                            data: {},
+                            dataType: 'json'
+                        })
+                        .done(function(result) {
+
+                            dataTable.ajax.reload();
+
+                            toastr.success(result.message, null, {
+                                "closeButton": true
+                            });
+
+                            dataTable.reload();
+
+                        })
+                        .fail(function(xhr, status, error) {
+
+                            if (xhr.status == 422) {
+                                toastr.error("Hay valores que no son v&aacute;lidos", null, {
+                                    "closeButton": true
+                                });
+                            } else {
+                                toastr.error("Hubo un problema interno al registrar la informaci&oacute;n", null, {
+                                    "closeButton": true
+                                });
+                            }
+
+                        });
+
+                }
+            })
 
         });
 

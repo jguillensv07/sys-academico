@@ -11,4 +11,13 @@ class Estudiante extends Model
 
     protected $guarded = ['id'];
     protected $dates = ['fecha_nacimiento'];
+
+    public function getNombreCompletoAttribute()
+    {
+        return $this->primer_nombre . ' ' .
+        $this->segundo_nombre . ' ' .
+        $this->primer_apellido . ' ' .
+        $this->segundo_apellido . ' ' .
+        $this->apellido_casada;
+    }
 }

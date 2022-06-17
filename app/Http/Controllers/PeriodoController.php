@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Ciclo;
+use App\Materia;
 use App\Periodo;
 use App\PeriodoCicloDetalle;
+use App\PeriodoCicloDetalleMateria;
+use App\User;
 use Illuminate\Http\Request;
 
 class PeriodoController extends Controller
@@ -32,7 +35,7 @@ class PeriodoController extends Controller
 
         $totalData = Periodo::count();
 
-        $periodos = Periodo::select('id', 'anio')
+        $periodos = Periodo::select('id', 'anio', 'estado')
             ->offset($offset)
             ->limit($limit)
             ->orderBy('anio', 'DESC')
@@ -63,8 +66,8 @@ class PeriodoController extends Controller
         if (!$request->ajax()) return '';
 
         $this->validate($request, [
-            "anio" => "required",            
-        ]);
+            "anio" => "required|unique",            
+        ]);       
 
         $periodo = new Periodo();
 
@@ -83,7 +86,7 @@ class PeriodoController extends Controller
         if (!$request->ajax()) return '';
 
         $this->validate($request, [
-            "anio" => "required",            
+            "anio" => "required|unique",            
         ]);
 
         $periodo = Periodo::find($request->id);        
@@ -95,6 +98,35 @@ class PeriodoController extends Controller
             'message' => 'La información se registro exitosamente.',
             'status' => 'OK'
         ]);
+    }
+
+    public function cambiarEstado(Request $request, $periodo_id)
+    {
+        if (!$request->ajax()) return '';
+
+        if($request->siguienteEstado == 'APERTURADO') {
+            
+            $validarPeriodo = Periodo::where('estado', 'APERTURADO')
+            ->where('id', '<>', $periodo_id)
+            ->first();
+    
+            if($validarPeriodo) {
+                return response()->json([
+                    'message' => 'Ya existe un período aperturado.',
+                    'status' => 'WARNING'
+                ]);
+            }
+        }
+
+        $periodo = Periodo::find($periodo_id);
+        $periodo->estado = strtoupper($request->siguienteEstado);
+        $periodo->save();
+
+        return response()->json([
+            'message' => 'La información se registro exitosamente.',
+            'status' => 'OK'
+        ]);
+        
     }
 
 
@@ -170,11 +202,84 @@ class PeriodoController extends Controller
             $periodoCicloDetalle->ciclo_id = $request->ciclo_id;
             $periodoCicloDetalle->estado = 'NO APERTURADO';
             $periodoCicloDetalle->save();
+
+            // Agregamos las materias al periodo - ciclo
+            $materias = Materia::where('ciclo_id', $request->ciclo_id)->get();
+            
+            foreach($materias as $materia)
+            {
+                $periodoCicloMateria = new PeriodoCicloDetalleMateria();
+                $periodoCicloMateria->materia_id = $materia->id;
+                $periodoCicloMateria->ciclo_id = $request->ciclo_id;
+                $periodoCicloMateria->periodo_id = $request->periodo_id;
+                $periodoCicloMateria->save();
+            }
         }
 
         return response()->json([
             'message' => 'La información se registro exitosamente.',
             'status' => 'OK'
         ]);
+    }
+
+
+    public function aperturarCicloPartial(Request $request)
+    {
+        if (!$request->ajax()) return '';
+
+        $periodoCicloDetalle = PeriodoCicloDetalle::with('periodo')
+            ->with('ciclo')
+            ->find($request->periodo_ciclo_detalle_id);
+
+        $periodoCicloDetalleMateria = PeriodoCicloDetalleMateria::with('materia')
+            ->where('periodo_id', $periodoCicloDetalle->periodo_id)
+            ->where('ciclo_id', $periodoCicloDetalle->ciclo_id)
+            ->get();
+
+        $docentes = User::all();
+        
+        return view('periodos.detalle-materias', compact('periodoCicloDetalle', 'periodoCicloDetalleMateria', 'docentes'));
+
+    }
+
+
+    public function aperturarCiclo(Request $request)
+    {
+        if (!$request->ajax()) return '';
+
+        $periodoCicloDetalleValidar = PeriodoCicloDetalle::where('estado', 'APERTURADO')
+        ->first();
+
+        if($periodoCicloDetalleValidar)
+        {
+            return response()->json([
+                'message' => 'Ya existe un ciclo aperturado, por favor verifique.',
+                'status' => 'WARNING'
+            ]);            
+        }
+
+        $periodoCicloDetalle = PeriodoCicloDetalle::where('periodo_id', $request->periodo_id)
+        ->where('ciclo_id', $request->ciclo_id)
+        ->first();
+
+        for ($i=0; $i < count($request->detale_materia); $i++) { 
+            $periodoCicloDetalleMateria = PeriodoCicloDetalleMateria::where('periodo_id', $periodoCicloDetalle->periodo_id)
+            ->where('ciclo_id', $periodoCicloDetalle->ciclo_id)
+            ->where('id', $request->detale_materia[$i])
+            ->first();
+
+            $periodoCicloDetalleMateria->docente_id = $request->docente[$i];
+
+            $periodoCicloDetalleMateria->save();
+        }
+
+        $periodoCicloDetalle->estado = 'APERTURADO';
+        $periodoCicloDetalle->save();
+
+        return response()->json([
+            'message' => 'La información se registro exitosamente.',
+            'status' => 'OK'
+        ]);
+
     }
 }

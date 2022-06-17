@@ -10,4 +10,10 @@ class SolicitudAdmision extends Model
     protected $primaryKey = 'id';
 
     protected $guarded = ['id'];
+    protected $dates = ['fecha_solicitud'];
+
+    public function Estudiante()
+    {
+        return $this->hasOne(Estudiante::class, 'id', 'estudiante_id');
+    }
 }

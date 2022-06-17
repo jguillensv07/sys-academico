@@ -5,7 +5,7 @@
 <div class="page-title-right">
     <ol class="breadcrumb p-0 m-0">
         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="/periodos">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/periodos">Períodos</a></li>
         <li class="breadcrumb-item active">Período Detalle</li>
     </ol>
 </div>
@@ -92,6 +92,24 @@
 </div>
 
 
+
+<div class="modal fade" id="aperturarCicloModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="_modalWindow" style="display:none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white text-uppercase componentTypeModalTitle" id="_modalWindow">Apertura de Ciclo</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="aperturarCicloContainer"></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
 @endsection
 
 
@@ -134,8 +152,32 @@
                     orderable: false
                 },
                 {
-                    data: 'estado',
-                    orderable: false
+                    data: null,
+                    sortable: false,
+                    render: function(data, type, full, meta) {
+
+                        if (type === 'display') {
+                            var jsonData = JSON.stringify(data);
+
+                            if (data.estado == 'NO APERTURADO') {
+                                return `
+                                    <span class="badge badge-warning">NO APERTURADO</span>
+                                `;
+                            } else if (data.estado == 'CERRADO') {
+                                return `
+                                    <span class="badge badge-danger">CERRADO</span>
+                                `;
+                            } else {
+                                return `
+                                    <span class="badge badge-info">APERTURADO</span>
+                                `;
+                            }
+
+                        } else {
+                            return data;
+                        }
+
+                    }
                 },
                 {
                     data: null,
@@ -145,31 +187,22 @@
                         if (type === 'display') {
                             var jsonData = JSON.stringify(data);
 
-                            if(data.estado == "NO APERTURADO")
-                            {
+                            if (data.estado == "NO APERTURADO") {
                                 return `
-                                <button class="btn btn-sm btn-info waves-effect waves-light text-white edit-estado" data-row='${jsonData}' data-estado='APERTURAR'>
+                                <button class="btn btn-sm btn-info waves-effect waves-light text-white cambiar-estado-aperturar" data-row='${jsonData}' data-estado='APERTURAR'>
                                     <i class="far fa-edit"></i>
                                     <span class='pl-1'>Aperturar</span>
                                 </button>`;
-                            }
-                            else  if(data.estado == "APERTURADO")
-                            {
+                            } else if (data.estado == "APERTURADO") {
                                 return `
                                 <button class="btn btn-sm btn-danger waves-effect waves-light text-white edit-estado" data-row='${jsonData}' data-estado='CERRAR'>
                                     <i class="far fa-edit"></i>
-                                    <span class='pl-1'>CERRAR</span>
+                                    <span class='pl-1'>Cerrar</span>
                                 </button>`;
+                            } else {
+                                return ``;
                             }
-                            else 
-                            {
-                                return `
-                                <button class="btn btn-sm btn-danger waves-effect waves-light text-white edit-estado" data-row='${jsonData}' data-estado='CERRAR'>
-                                    <i class="far fa-edit"></i>
-                                    <span class='pl-1'>CERRAR</span>
-                                </button>`;
-                            }
-                            
+
                         } else {
                             return data;
                         }
@@ -222,6 +255,84 @@
 
                 });
 
+        });
+
+        $(document).on('click', '.cambiar-estado-aperturar', function() {
+            var btn = $(this);
+            var data = btn.data('row');
+
+            $('#aperturarCicloContainer').html('Cargado...');
+
+            $.ajax({
+                    method: "GET",
+                    url: `/periodos/${periodo_id}/detalle/aperturar-ciclo-partial`,
+                    data: {
+                        periodo_ciclo_detalle_id: data.id
+                    }
+                })
+                .done(function(result) {
+
+                    $('#aperturarCicloContainer').html(result);
+                    $('#aperturarCicloModal').modal('show');
+                })
+                .fail(function(xhr, status, error) {
+                    console.log(xhr.status);
+                    if (xhr.status == 422) {
+                        toastr.error("Hay errores en los valores enviados.", null, {
+                            "closeButton": true
+                        });
+                    } else {
+                        toastr.error("Hubo un error interno, contacte a su Administrador de Sistemas.", null, {
+                            "closeButton": true
+                        });
+                    }
+
+                });
+
+        });
+
+
+        $(document).on('click', '#btnAperturarCiclo', function() {
+
+            var dataForm = $('#aperturaCicloForm').serialize();
+            var urlTarget = `/periodos/${periodo_id}/detalle/aperturar-ciclo-partial`;
+
+            $.ajax({
+                    method: "POST",
+                    url: urlTarget,
+                    data: dataForm,
+                    dataType: 'json'
+                })
+                .done(function(result) {
+
+                    if (result.status == 'WARNING') {
+                        toastr.warning(result.message, null, {
+                            "closeButton": true
+                        });
+                        return;
+                    }
+
+                    dataTable.ajax.reload();
+
+                    toastr.success(result.message, null, {
+                        "closeButton": true
+                    });
+
+                    $('#aperturarCicloModal').modal('hide');
+                })
+                .fail(function(xhr, status, error) {
+
+                    if (xhr.status == 422) {
+                        toastr.error("Hay errores en los valores enviados.", null, {
+                            "closeButton": true
+                        });
+                    } else {
+                        toastr.error("Hubo un error interno, contacte a su Administrador de Sistemas.", null, {
+                            "closeButton": true
+                        });
+                    }
+
+                });
         });
 
     });

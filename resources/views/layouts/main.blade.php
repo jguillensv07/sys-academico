@@ -163,8 +163,14 @@
                         <li>
                             <a href="javascript: void(0);" class="waves-effect">
                                 <i class="ion-ios-apps"></i>
-                                <span> Registro de Notas </span>                                
-                            </a>                            
+                                <span> Academico </span>      
+                                <span class="menu-arrow"></span>                          
+                            </a>    
+                            <ul class="nav-second-level" aria-expanded="false">                                
+                                <li><a href="/inscripciones">Inscripción de Materias</a></li>                               
+                                <li><a href="/colector-de-notas">Colector de Notas</a></li>  
+                                <li><a href="/hojas-de-asistencia">Hoja de Asistencia</a></li>  
+                            </ul>                        
                         </li>
 
                         <li>

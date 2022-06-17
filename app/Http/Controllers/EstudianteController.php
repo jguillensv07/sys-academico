@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Estudiante;
+use App\SolicitudAdmision;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EstudianteController extends Controller
@@ -45,6 +47,56 @@ class EstudianteController extends Controller
         foreach ($estudiantes as $estudiante) {
             $nestedData = $estudiante->toArray();
 
+            $nestedData['fecha_nacimiento2'] = @date_format($estudiante->fecha_nacimiento, 'Y/m/d');
+
+            $dataResult[] = $nestedData;
+        }
+
+
+        $json_data = array(
+            'draw' => intval($request->draw),
+            'recordsTotal' => intval($totalData),
+            'recordsFiltered' => intval($totalFiltered),
+            'data' => $dataResult
+        );
+
+        return json_encode($json_data);
+    }
+
+    public function getAllAdmisionAprobada(Request $request)
+    {
+        if (!$request->ajax()) return '';
+
+        $totalData = 0;
+        $totalFiltered = 0;
+        $dataResult = array();
+        $offset = $request->start;
+        $limit = $request->length;
+
+        $searchValue = '%';
+
+        if (isset($request->search['value'])) {
+            $searchValue = '%' . trim($request->search['value']) . '%';
+        }
+
+        $totalData = Estudiante::count();
+
+        $estudiantes = Estudiante::where('codigo', 'like', $searchValue)
+            ->whereOr('primer_nombre', 'like', $searchValue)
+            ->whereOr('segundo_nombre', 'like', $searchValue)
+            ->whereOr('primer_apellido', 'like', $searchValue)
+            ->whereOr('segundo_apellido', 'like', $searchValue)
+            ->whereOr('dui', 'like', $searchValue)
+            ->where('admision_aprobada', 'SI')
+            ->offset($offset)
+            ->limit($limit)            
+            ->get();
+        
+        $totalFiltered = $estudiantes->count();
+
+        foreach ($estudiantes as $estudiante) {
+            $nestedData = $estudiante->toArray();
+            $nestedData['nombre_completo'] = $estudiante->NombreCompleto;
             $nestedData['fecha_nacimiento2'] = @date_format($estudiante->fecha_nacimiento, 'Y/m/d');
 
             $dataResult[] = $nestedData;
@@ -105,6 +157,7 @@ class EstudianteController extends Controller
         $estudiante->ultimo_grado_estudio = $request->ultimo_grado_estudio;
         $estudiante->es_graduado = isset($request->es_graduado) ? '1' : '0';
         $estudiante->institucion_estudio = $request->institucion_estudio;
+        $estudiante->admision_aprobada = 'NO';
 
         $estudiante->save();
 
@@ -156,6 +209,35 @@ class EstudianteController extends Controller
         $estudiante->institucion_estudio = $request->institucion_estudio;
 
         $estudiante->save();
+
+        return response()->json([
+            'message' => 'La información se registro exitosamente.',
+            'status' => 'OK'
+        ]);
+    }
+
+
+    public function generarSolicitudAdmision(Request $request, $estudiante_id)
+    {
+        if (!$request->ajax()) return '';
+
+        $solicitud = SolicitudAdmision::where('estudiante_id', $estudiante_id)
+            ->whereIn('aprobada', ['PE', 'SI'])
+            ->first();
+
+        if(!$solicitud)
+        {
+            $solicitud = new SolicitudAdmision();
+            $numeroSolicitud = SolicitudAdmision::count() + 1;
+            $numeroSolicitud = 'S' . str_pad($numeroSolicitud, 6, '0', STR_PAD_LEFT);
+
+            $solicitud->numero_solicitud = $numeroSolicitud;
+            $solicitud->fecha_solicitud = Carbon::now();
+            $solicitud->aprobada = 'PE';
+            $solicitud->estudiante_id = $estudiante_id;
+            $solicitud->save();
+           
+        }
 
         return response()->json([
             'message' => 'La información se registro exitosamente.',

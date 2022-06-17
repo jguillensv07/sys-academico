@@ -37,6 +37,7 @@
                         <tr>
                             <th>Id</th>
                             <th>Año</th>
+                            <th>Estado</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -135,15 +136,72 @@
                         if (type === 'display') {
                             var jsonData = JSON.stringify(data);
 
-                            return `
+                            if (data.estado == 'NO APERTURADO') {
+                                return `
+                                    <span class="badge badge-warning">NO APERTURADO</span>
+                                `;
+                            } else if (data.estado == 'CERRADO') {
+                                return `
+                                    <span class="badge badge-danger">CERRADO</span>
+                                `;
+                            } else {
+                                return `
+                                    <span class="badge badge-info">APERTURADO</span>
+                                `;
+                            }
+                        } else {
+                            return data;
+                        }
+
+                    }
+                },
+                {
+                    data: null,
+                    sortable: false,
+                    render: function(data, type, full, meta) {
+
+                        if (type === 'display') {
+                            var jsonData = JSON.stringify(data);
+
+                            let button = '';
+
+                            if (data.estado == 'NO APERTURADO') {
+
+                                button = `
                                 <button class="btn btn-sm btn-primary waves-effect waves-light text-white edit-category" data-row='${jsonData}' data-title='Editar' data-action='edit' data-toggle='modal' data-target='#FormEditModal'>
                                     <i class="far fa-edit"></i>
                                     <span class='pl-1'>Editar</span>
+                                </button>`;
+
+                                button += `
+                                <button class="btn btn-sm btn-info waves-effect waves-light text-white cambiar-estado" data-row='${jsonData}' data-estado='APERTURADO'>
+                                    <i class="far fa-edit"></i>
+                                    <span class='pl-1'>Aperturar</span>
                                 </button>
+                                `;
+                            } else if (data.estado == 'APERTURADO') {
+
+                                button = `                               
                                 <a href="/periodos/${data.id}/detalle" class="btn btn-sm btn-success waves-effect waves-light text-white" data-row='${jsonData}'>
                                     <i class="far fa-file"></i>
                                     <span class='pl-1'>Detalle</span>
                                 </a>`;
+
+                                button += `
+                                <button class="btn btn-sm btn-danger waves-effect waves-light text-white cambiar-estado" data-row='${jsonData}' data-estado='CERRADO'>
+                                    <i class="far fa-edit"></i>
+                                    <span class='pl-1'>Cerrar</span>
+                                </button>
+                                `;
+                            } else {
+                                button = `                                 
+                                    <a href="/periodos/${data.id}/detalle" class="btn btn-sm btn-success waves-effect waves-light text-white" data-row='${jsonData}'>
+                                        <i class="far fa-file"></i>
+                                        <span class='pl-1'>Detalle</span>
+                                    </a>`;
+                            }
+
+                            return button;
                         } else {
                             return data;
                         }
@@ -187,14 +245,13 @@
 
         $('#saveChanges').on('click', async function() {
 
-           
+
             if (!form.parsley().validate()) return;
 
             var dataForm = $('#periodos-form').serialize();
             var urlTarget = '/periodos/create';
-            
-            if(actionType == 'edit')
-            {
+
+            if (actionType == 'edit') {
                 urlTarget = '/periodos/update';
             }
 
@@ -227,6 +284,70 @@
                     }
 
                 });
+
+        });
+
+
+        $(document).on('click', '.cambiar-estado', function() {
+
+            var button = $(this);
+            var datos = button.data('row');
+            var estado = button.data('estado');
+
+            Swal.fire({
+                title: 'Advertencia',
+                text: "¿Esta seguro(a) de cambiar el estado al periodo seleccionado?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.value) {
+
+                    $.ajax({
+                            method: "POST",
+                            url: `/periodos/${datos.id}/cambiar-estado`,
+                            data: {
+                                siguienteEstado: estado
+                            },
+                            dataType: 'json'
+                        })
+                        .done(function(result) {
+
+                            if (result.status == 'WARNING') {
+
+                                toastr.warning(result.message, null, {
+                                    "closeButton": true
+                                });
+                                return;
+                            }
+
+                            dataTable.ajax.reload();
+
+                            toastr.success(result.message, null, {
+                                "closeButton": true
+                            });
+
+                            $('#FormEditModal').modal('hide');
+                        })
+                        .fail(function(xhr, status, error) {
+
+                            if (xhr.status == 422) {
+                                toastr.error("Hay errores en los valores enviados.", null, {
+                                    "closeButton": true
+                                });
+                            } else {
+                                toastr.error("Hubo un error interno, contacte a su Administrador de Sistemas.", null, {
+                                    "closeButton": true
+                                });
+                            }
+
+                        });
+
+                }
+            })
+
 
         });
 
