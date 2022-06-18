@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\DB;
 
 class NotasController extends Controller
 {
+
+    public function __construct()
+	{
+	    $this->middleware('auth');
+	}
+    
     public function index()
     {
         $periodo = Periodo::where('estado', 'APERTURADO')->first();
@@ -89,5 +95,24 @@ class NotasController extends Controller
             'message' => 'La información se registro exitosamente.',
             'status' => 'OK'
         ]);
+    }
+
+
+    public function consultarNotasPorMateria()
+    {
+        $periodo = Periodo::where('estado', 'APERTURADO')->first();
+        $periodoDetalleCiclo = PeriodoCicloDetalle::where('periodo_id', $periodo->id)
+        ->where('estado', 'APERTURADO')       
+        ->first();
+
+        $ciclo = Ciclo::find($periodoDetalleCiclo->ciclo_id);
+
+        $periodoDetalleCicloMaterias = PeriodoCicloDetalleMateria::with('materia')
+        ->where('periodo_id', $periodo->id)
+        ->where('ciclo_id', $ciclo->id)
+        ->get();
+
+        return view('notas.nota-consultar-materia', compact('periodo', 'periodoDetalleCiclo', 'ciclo', 'periodoDetalleCicloMaterias'));
+        
     }
 }

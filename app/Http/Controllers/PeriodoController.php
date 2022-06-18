@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 
 class PeriodoController extends Controller
 {
+    public function __construct()
+	{
+	    $this->middleware('auth');
+	}
+    
     public function index(Request $request)
     {
         return view ('periodos.periodo-index');
@@ -66,7 +71,7 @@ class PeriodoController extends Controller
         if (!$request->ajax()) return '';
 
         $this->validate($request, [
-            "anio" => "required|unique",            
+            "anio" => "required",            
         ]);       
 
         $periodo = new Periodo();
@@ -86,7 +91,7 @@ class PeriodoController extends Controller
         if (!$request->ajax()) return '';
 
         $this->validate($request, [
-            "anio" => "required|unique",            
+            "anio" => "required",            
         ]);
 
         $periodo = Periodo::find($request->id);        

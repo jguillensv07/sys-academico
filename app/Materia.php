@@ -13,4 +13,5 @@ class Materia extends Model
     {
         return $this->belongsTo(Ciclo::class, 'ciclo_id', 'id')->withDefault();
     }
+    
 }

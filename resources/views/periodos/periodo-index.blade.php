@@ -188,7 +188,8 @@
                                 </a>`;
 
                                 button += `
-                                <button class="btn btn-sm btn-danger waves-effect waves-light text-white cambiar-estado" data-row='${jsonData}' data-estado='CERRADO'>
+                                <button class="btn btn-sm btn-danger
+                                 waves-effect waves-light text-white cambiar-estado" data-row='${jsonData}' data-estado='CERRADO'>
                                     <i class="far fa-edit"></i>
                                     <span class='pl-1'>Cerrar</span>
                                 </button>

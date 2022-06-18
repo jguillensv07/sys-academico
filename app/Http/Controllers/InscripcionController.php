@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class InscripcionController extends Controller
 {
+
+    public function __construct()
+	{
+	    $this->middleware('auth');
+	}
+    
     public function index()
     {
         return view('inscripciones.inscripcion-index');
@@ -186,5 +192,20 @@ class InscripcionController extends Controller
         ->get();
         
         return view('inscripciones.hoja-asistencia-partial', compact('periodo','ciclo','materia','estudiantes'));
+    }
+
+
+    public function listadoInscripciones(Request $request)
+    {
+        $periodo = isset($request->periodo) ? $request->periodo : -1;
+        
+        $inscripciones = Inscripcion::with('estudiante')
+        ->where('periodo_id', $periodo)
+        ->orderBy('fecha')
+        ->get();
+
+        $periodos = Periodo::orderBy('anio')->get();
+
+        return view('inscripciones.inscripcion-listado', compact('inscripciones', 'periodos', 'periodo'));
     }
 }

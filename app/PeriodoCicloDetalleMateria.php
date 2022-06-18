@@ -27,6 +27,6 @@ class PeriodoCicloDetalleMateria extends Model
 
     public function Docente()
     {
-        return $this->belongsTo(Materia::class, 'materia_id', 'id')->withDefault();
+        return $this->belongsTo(User::class, 'docente_id', 'id')->withDefault();
     }
 }

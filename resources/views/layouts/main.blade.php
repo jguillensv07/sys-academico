@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>{{ env('APP_NAME') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Sistema Academico y Control de Notas PIBCH" name="description" />
+    <meta content="Sistema Academico y Control de Notas SEBBES" name="description" />
     <meta content="JGuillen" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -47,42 +47,34 @@
 
                 <li class="dropdown notification-list">
                     <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                        <img src="{{ URL::asset('images/users/avatar-1.jpg') }}" alt="user-image" class="rounded-circle">
+                        <img src="{{ URL::asset('images/users/profile.png') }}" alt="user-image" class="rounded-circle">
                         <span class="pro-user-name ml-1">
-                            Thompson <i class="mdi mdi-chevron-down"></i>
+                            {{ Auth::user()->name }} <i class="mdi mdi-chevron-down"></i>
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                         <!-- item-->
                         <div class="dropdown-header noti-title">
-                            <h6 class="text-overflow m-0">Welcome !</h6>
+                            <h6 class="text-overflow m-0">¡Bienvenid@!</h6>
                         </div>
 
                         <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <a href="/mi-cuenta" class="dropdown-item notify-item">
                             <i class="mdi mdi-account-outline"></i>
-                            <span>Profile</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="mdi mdi-settings-outline"></i>
-                            <span>Settings</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
-                            <i class="mdi mdi-lock-outline"></i>
-                            <span>Lock Screen</span>
-                        </a>
+                            <span>Cambiar mi clave</span>
+                        </a>                       
 
                         <div class="dropdown-divider"></div>
 
                         <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                        <a href="{{ route('logout') }}" class="dropdown-item notify-item" onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
                             <i class="mdi mdi-logout-variant"></i>
-                            <span>Logout</span>
+                            <span>Cerrar Sesión</span>
                         </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
 
                     </div>
                 </li>
@@ -106,10 +98,10 @@
                 <a href="index.html" class="logo text-center logo-light">
                     <span class="logo-lg">
                         <!--<img src="{{ URL::asset('images/logo-sebbes.png') }}" alt="" height="18">-->
-                        <span class="logo-lg-text-light">PIBCH</span>
+                        <span class="logo-lg-text-light">SEBBES</span>
                     </span>
                     <span class="logo-sm">
-                        <span class="logo-lg-text-light">PIBCH</span>
+                        <span class="logo-lg-text-light">SEBBES</span>
                         <!--<img src="{{ URL::asset('images/logo-sm.png') }}" alt="" height="22">-->
                     </span>
                 </a>
@@ -180,14 +172,10 @@
                                 <span class="menu-arrow"></span>                           
                             </a>
                             <ul class="nav-second-level" aria-expanded="false">
-                                <li><a href="forms-elements.html">General Elements</a></li>
-                                <li><a href="forms-validation.html">Form Validation</a></li>
-                                <li><a href="forms-advanced.html">Advanced Form</a></li>
-                                <li><a href="forms-wizard.html">Form Wizard</a></li>
-                                <li><a href="form-quilljs.html">Quilljs Editor</a></li>
-                                <li><a href="forms-uploads.html">Multiple File Upload</a></li>
-                                <li><a href="forms-image-crop.html">Image Crop</a></li>
-                                <li><a href="forms-xeditable.html">X-Editable</a></li>
+                                <li><a href="/listado-de-materias">Listado de Materias</a></li>
+                                <li><a href="/listado-de-inscripciones">Listado de Inscripciones</a></li>
+                                <li><a href="/listado-de-notas-por-materia">Listado de Notas por Materia</a></li>
+                                <li><a href="/registro-academico-estudiante">Registro Académico por Estudiante</a></li>                                
                             </ul>
                         </li>                        
 

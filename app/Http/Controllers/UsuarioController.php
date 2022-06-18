@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
+
+    public function __construct()
+	{
+	    $this->middleware('auth');
+	}
+    
     public function index(Request $request)
     {
         return view ('usuarios.usuario-index');
@@ -102,5 +109,32 @@ class UsuarioController extends Controller
             'message' => 'La información se registro exitosamente.',
             'status' => 'OK'
         ]);
+    }
+
+
+    public function miCuenta()
+    {
+        $userLoggedId = Auth::user()->id;
+        $user = User::find($userLoggedId);
+        return view('usuarios.usuario-mi-cuenta', compact('user'));
+    }
+
+    public function cambiarClave(Request $request)
+    {
+
+        if (Auth::check()) {
+            $currUserPassword = Auth::user()->password;
+            if (!Hash::check($request->old_password, $currUserPassword)) {
+                return redirect()->back()->with(['error' => 'Tu clave actual no es válida.']);
+            }
+
+            $objUser = User::find(Auth::user()->id);
+            $objUser->password = hash::make($request->new_password);
+            $objUser->save();
+
+            return redirect()->to('/mi-cuenta')->with(['user-password-changed-ok' => true]);
+        } else {
+            return redirect()->to('/');
+        }
     }
 }

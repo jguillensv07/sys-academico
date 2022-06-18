@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Ciclo;
 use App\Materia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MateriaController extends Controller
 {
+
+    public function __construct()
+	{
+	    $this->middleware('auth');
+	}
+    
     public function index(Request $request)
     {
         $ciclos = Ciclo::all();
@@ -105,5 +112,17 @@ class MateriaController extends Controller
             'message' => 'La información se registro exitosamente.',
             'status' => 'OK'
         ]);
+    }
+
+    public function listadoMaterias()
+    {
+        $materias = DB::table('materia')
+        ->join('ciclo', 'materia.ciclo_id', '=', 'ciclo.id')
+        ->select('materia.nombre as materia', 'materia.descripcion', 'ciclo.nombre as ciclo', 'ciclo.orden')
+        ->orderBy('ciclo.orden')
+        ->orderBy('materia.nombre')
+        ->get();
+
+        return view('materias.materia-listado', compact('materias'));
     }
 }

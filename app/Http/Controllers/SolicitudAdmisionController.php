@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class SolicitudAdmisionController extends Controller
 {
+
+    public function __construct()
+	{
+	    $this->middleware('auth');
+	}
+    
     public function index(Request $request)
     {
         return view('solicitud_admision.solicitud-admision-index');
