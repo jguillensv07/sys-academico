@@ -5,7 +5,7 @@
 <div class="page-title-right">
     <ol class="breadcrumb p-0 m-0">
         <li class="breadcrumb-item"><a href="/#">Dashboard</a></li>
-        <li class="breadcrumb-item active">Colector de Notas</li>
+        <li class="breadcrumb-item active">Hoja de Asistencia</li>
     </ol>
 </div>
 @endsection
@@ -20,7 +20,7 @@
             <div class="card-body">
 
                 <h4 class="card-title">
-                    COLECTOR DE NOTAS
+                    HOJA DE ASISTENCIA
                 </h4>
 
                 <div class="row">
@@ -56,17 +56,7 @@
                                             @endforeach
                                         </select>
                                     </td>
-                                </tr>
-                                <!--<tr>
-                                    <th scope="row">Computo</th>
-                                    <td>
-                                        <select name="computo" id="computo" class="form-control">
-                                            <option value="1">Computo 1</option>
-                                            <option value="2">Computo 2</option>
-                                        </select>
-                                    </td>
-                                </tr>-->
-
+                                </tr>                                
                                 <tr>
                                     <td colspan="2">
                                         <div class="d-print-none">
@@ -84,18 +74,16 @@
                     <table class="table table-hover dt-responsive nowrap" id="estudiantes-table" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead class="thead-dark">
                             <tr>
-                                <th rowspan="2">No.</th>
-                                <th rowspan="2">Código</th>
-                                <th rowspan="2">Nombre</th>
-                                <th colspan="2">Computo 1</th>
-                                <th colspan="2">Computo 2</th>
-                                <th rowspan="2">Nota Final</th>
+                                <th>No.</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Fecha:______________</th>
+                                <th>Fecha:______________</th>
+                                <th>Fecha:______________</th>
+                                <th>Fecha:______________</th>                            
                             </tr>
                             <tr>
-                                <th>Nota 1</th>
-                                <th>Nota 2</th>
-                                <th>Nota 1</th>
-                                <th>Nota 2</th>
+                               
                             </tr>
                         </thead>
                         <tbody>
@@ -135,7 +123,7 @@
 
             $.ajax({
                     method: "GET",
-                    url: `/colector-de-notas/listar-estudiantes`,
+                    url: `/hojas-de-asistencia/listar-estudiantes`,
                     data: {
                         periodo_id: periodo,
                         ciclo_id: ciclo,

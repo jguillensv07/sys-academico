@@ -197,9 +197,8 @@
                                 <span> Usuarios </span>  
                                 <span class="menu-arrow"></span>                              
                             </a>
-                            <ul class="nav-second-level" aria-expanded="false">
-                                <li><a href="forms-elements.html">Nuevo Usuario</a></li>
-                                <li><a href="forms-validation.html">Listado de Usuarios</a></li>                                
+                            <ul class="nav-second-level" aria-expanded="false">                                
+                                <li><a href="/usuarios">Listado de Usuarios</a></li>                                
                             </ul>
                         </li>
 

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Ciclo;
 use App\Inscripcion;
 use App\InscripcionDetalle;
+use App\Materia;
 use App\Periodo;
 use App\PeriodoCicloDetalle;
 use App\PeriodoCicloDetalleMateria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InscripcionController extends Controller
 {
@@ -142,5 +144,47 @@ class InscripcionController extends Controller
         $inscripcion = Inscripcion::with('Detalle')->find($inscripcion_id);
 
         return view('inscripciones.incripcion-editar', compact('inscripcion'));
+    }
+
+
+    public function hojaAsistencia()
+    {
+        $periodo = Periodo::where('estado', 'APERTURADO')->first();
+        $periodoDetalleCiclo = PeriodoCicloDetalle::where('periodo_id', $periodo->id)
+        ->where('estado', 'APERTURADO')       
+        ->first();
+
+        $ciclo = Ciclo::find($periodoDetalleCiclo->ciclo_id);
+
+        $periodoDetalleCicloMaterias = PeriodoCicloDetalleMateria::with('materia')
+        ->where('periodo_id', $periodo->id)
+        ->where('ciclo_id', $ciclo->id)
+        ->get();
+
+        return view('inscripciones.hoja-asistencia', compact('periodo', 'periodoDetalleCiclo', 'ciclo', 'periodoDetalleCicloMaterias'));
+    }
+
+    public function listadoEstudiantesPartial(Request $request)
+    {
+        if (!$request->ajax()) return '';
+
+        $periodo = Periodo::find($request->periodo_id);
+        $ciclo = Ciclo::find($request->ciclo_id);
+        $materia = Materia::find($request->materia_id);
+
+        $estudiantes = DB::table('estudiante')
+        ->join('inscripcion', 'estudiante.id', 'inscripcion.estudiante_id')
+        ->join('inscripcion_detalle', 'inscripcion.id', 'inscripcion_detalle.inscripcion_id')
+        ->where('inscripcion.periodo_id', $request->periodo_id)
+        ->where('inscripcion.periodo_id', $request->periodo_id)
+        ->where('inscripcion_detalle.materia_id', $request->materia_id)
+        ->where('inscripcion_detalle.estado', 'INSCRITA')
+        ->orderBy('estudiante.primer_apellido')
+        ->orderBy('estudiante.segundo_apellido')
+        ->orderBy('estudiante.primer_nombre')
+        ->orderBy('estudiante.segundo_nombre')
+        ->get();
+        
+        return view('inscripciones.hoja-asistencia-partial', compact('periodo','ciclo','materia','estudiantes'));
     }
 }

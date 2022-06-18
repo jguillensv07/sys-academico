@@ -62,8 +62,16 @@ Route::get('/inscripciones/editar/{inscripcion_id}', 'InscripcionController@edit
 Route::get('/inscripciones/get-all', 'InscripcionController@getAll');
 Route::post('/inscripciones/nuevo', 'InscripcionController@store');
 Route::post('/inscripciones/editar/{inscripcion_id}', 'InscripcionController@update');
+Route::get('/hojas-de-asistencia', 'InscripcionController@hojaAsistencia');
+Route::get('/hojas-de-asistencia/listar-estudiantes', 'InscripcionController@listadoEstudiantesPartial');
 
 
 Route::get('/colector-de-notas', 'NotasController@index');
 Route::get('/colector-de-notas/listar-estudiantes', 'NotasController@listadoEstudiantesPartial');
+Route::post('/colector-de-notas', 'NotasController@store');
 
+
+Route::get('/usuarios', 'UsuarioController@index');
+Route::get('/usuarios/get-all', 'UsuarioController@getAll');
+Route::post('/usuarios/create', 'UsuarioController@create');
+Route::post('/usuarios/update', 'UsuarioController@update');
