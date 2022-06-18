@@ -1,11 +1,11 @@
-Proyecto Final - Programación Web II
-Ciclo I-2022 - UNIVO
+Proyecto Final - Programación Web II<br>
+Ciclo I-2022 - UNIVO<br>
 
-Integrantes:
+Integrantes:<br>
 
-Claros Guillen Herberth Jhonattan
-Lopez Romero Suleyma Aidee
-Maldonado Reyes Fredis Humberto
-Segovia Villalobos Sonia Margarita
+Claros Guillen Herberth Jhonattan<br>
+Lopez Romero Suleyma Aidee<br>
+Maldonado Reyes Fredis Humberto<br>
+Segovia Villalobos Sonia Margarita<br>
 
 
